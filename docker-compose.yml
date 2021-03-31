@@ -4,6 +4,9 @@ version: '3'
 services:
   bedsamplot:
     container_name: bedsamplot
+    build:
+      context: .
+      dockerfile: Dockerfile
     image: dceoy/samplot:latest
     user: ${UID}:${GID}
     userns_mode: host
@@ -11,4 +14,4 @@ services:
       - .:/wd
     working_dir: /wd
     entrypoint:
-      - /wd/bedsamplot
+      - bedsamplot

@@ -14,6 +14,15 @@ Installation
     $ cp -a bedsamplot/bedsamplot /path/to/bin  # a path in ${PATH}
     ```
 
+Docker image
+------------
+
+The image is available at [Docker Hub](https://hub.docker.com/r/dceoy/bedsamplot/).
+
+```sh
+$ docker pull dceoy/bedsamplot
+```
+
 Usage
 -----
 
