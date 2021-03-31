@@ -11,9 +11,10 @@
 #   -h, --help        Print usage
 #   --version         Print version
 #   --cpus INT        Limit CPUs for multiprocessing
-#   --prefix PREFIX   Specify an output prefix [default: bedsamplot]
-#   --bed BED         Specify a path to region BED file
-#   ...               Arguments to be passed to `samplot plot`
+#   --prefix PREFIX   Output prefix [default: bedsamplot]
+#   --bed BED         Regions' BED file name
+#   -b BAMS           Space-delimited list of BAM/CRAM file names
+#   ...               Additional arguments to be passed to `samplot plot`
 
 set -euo pipefail
 
