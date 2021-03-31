@@ -1,0 +1,14 @@
+---
+version: '3'
+
+services:
+  bedsamplot:
+    container_name: bedsamplot
+    image: dceoy/samplot:latest
+    user: ${UID}:${GID}
+    userns_mode: host
+    volumes:
+      - .:/wd
+    working_dir: /wd
+    entrypoint:
+      - /wd/bedsamplot

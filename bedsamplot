@@ -1,0 +1,109 @@
+#!/usr/bin/env bash
+#
+# Samplot wrapper for multiple regions
+#
+# Usage:
+#   bedsamplot [--cpus INT] [--prefix PREFIX] --bed BED ...
+#   bedsamplot --version
+#   bedsamplot -h|--help
+#
+# Options:
+#   -h, --help        Print usage
+#   --version         Print version
+#   --cpus INT        Limit CPUs for multiprocessing
+#   --prefix PREFIX   Specify an output prefix [default: bedsamplot]
+#   --bed BED         Specify a path to region BED file
+#   ...               Arguments to be passed to `samplot plot`
+
+set -euo pipefail
+
+if [[ ${#} -ge 1 ]]; then
+  break_loop=0
+  for a in "${@}"; do
+    if [[ "${a}" = '--debug' ]]; then
+      break_loop=1
+    elif [[ break_loop -eq 1 ]]; then
+      [[ "${a}" = 'DEBUG' ]] && set -x
+      break
+    fi
+  done
+fi
+
+COMMAND_PATH=$(realpath "${0}")
+COMMAND_NAME=$(basename "${COMMAND_PATH}")
+COMMAND_VERSION='v0.0.1'
+
+case "${OSTYPE}" in
+  darwin* )
+    CPUS=$(sysctl -n hw.ncpu)
+    ;;
+  linux* )
+    CPUS=$(grep -ce '^processor\s\+:' /proc/cpuinfo)
+    ;;
+  * )
+    CPUS=1
+    :
+    ;;
+esac
+MAIN_ARGS=()
+PREFIX='bedsamplot'
+
+function print_version {
+  echo "${COMMAND_NAME}: ${COMMAND_VERSION}"
+}
+
+function print_usage {
+  sed -ne '1,2d; /^#/!q; s/^#$/# /; s/^# //p;' "${COMMAND_PATH}"
+}
+
+function abort {
+  {
+    if [[ ${#} -eq 0 ]]; then
+      cat -
+    else
+      COMMAND_NAME=$(basename "${COMMAND_PATH}")
+      echo "${COMMAND_NAME}: ${*}"
+    fi
+  } >&2
+  exit 1
+}
+
+while [[ ${#} -ge 1 ]]; do
+  case "${1}" in
+    '--prefix' )
+      PREFIX="${2}" && shift 2
+      ;;
+    '--cpus' )
+      CPUS="${2}" && shift 2
+      ;;
+    '--bed' )
+      BED_PATH="${2}" && shift 2
+      ;;
+    '--version' )
+      print_version && exit 0
+      ;;
+    '-h' | '--help' )
+      print_usage && exit 0
+      ;;
+    * )
+      MAIN_ARGS+=("${1}") && shift 1
+      ;;
+  esac
+done
+
+
+echo '>> Print versions'
+samplot --version
+python --version
+print_version
+
+echo '>> Run Samplot'
+python -c "\
+from fileinput import input; \
+[(lambda t: \
+  print(
+    f'-o ${PREFIX}.{t[0]}_{int(t[1]) + 1}_{t[2]}_{t[3].replace(\";\", \"_\") if len(t) > 3 else \"\"}.pdf -c {t[0]} -s {int(t[1]) + 1} -e {t[2]}')
+ )(s.split(maxsplit=4)) \
+ for s in input()]; \
+" "${BED_PATH}" \
+  | xargs -P "${CPUS}" -I {} bash -xc "samplot plot {} ${MAIN_ARGS[*]}"
