@@ -1,9 +1,9 @@
 #!/usr/bin/env bash
 #
-# Samplot wrapper for multiple regions
+# Parallelized Samplot executor for multiple regions in a BED file
 #
 # Usage:
-#   bedsamplot [--cpus INT] [--prefix PREFIX] --bed BED ...
+#   bedsamplot [--cpus INT] [--prefix PREFIX] [--margin INT] --bed BED ...
 #   bedsamplot --version
 #   bedsamplot -h|--help
 #
@@ -35,7 +35,7 @@ fi
 
 COMMAND_PATH=$(realpath "${0}")
 COMMAND_NAME=$(basename "${COMMAND_PATH}")
-COMMAND_VERSION='v0.0.1'
+COMMAND_VERSION='v0.1.0'
 
 case "${OSTYPE}" in
   darwin* )

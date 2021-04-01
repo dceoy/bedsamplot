@@ -1,7 +1,7 @@
 bedsamplot
 ==========
 
-Samplot wrapper for multiple regions
+Parallelized Samplot executor for multiple regions in a BED file
 
 Installation
 ------------
