@@ -26,14 +26,23 @@ $ docker pull dceoy/bedsamplot
 Usage
 -----
 
-Run `samplot plot` for each region in a BED file.
+Run `samplot plot` for each region in a BED file in parallel.
 
 ```sh
 $ bedsamplot \
     --bed <bed> \
     --reference <fa> \
-    --transcript_file <gff3> \
+    --transcript_file <gff> \
+    --annotation_files <bed>... \
     --bams <cram>...
 ```
 
-Run `bedsamplot --help` for more information.
+The following options are automatically set for `samplot plot` by bedsamplot:
+- `-o` (`--output_file`)
+- `-c` (`--chrom`)
+- `-s` (`--start`)
+- `-e` (`--end`)
+
+All the options of `samplot plot` except for the above are available.
+
+Run `bedsamplot --help` and `samplot plot --help` for more information.
