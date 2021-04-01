@@ -16,6 +16,8 @@
 #   --bed BED         Regions' BED file name
 #   -b BAMS           Space-delimited list of BAM/CRAM file names
 #   ...               Additional arguments to be passed to `samplot plot`
+#                     (-c, -s, -e, and -o are unavailable because they are used
+#                      by bedsamplot.)
 
 set -euo pipefail
 
@@ -90,6 +92,9 @@ while [[ ${#} -ge 1 ]]; do
       ;;
     '-h' | '--help' )
       print_usage && exit 0
+      ;;
+    '-c' | '--chrom' | '-s' | '--start' | '-e' | '--end' | '-o' | '--output_file' )
+      abort "unavailable option: ${1}"
       ;;
     * )
       MAIN_ARGS+=("${1}") && shift 1
