@@ -3,21 +3,23 @@
 # Parallelized Samplot executor for multiple regions in a BED file
 #
 # Usage:
-#   bedsamplot [--cpus INT] [--prefix PREFIX] [--margin INT] --bed BED ...
+#   bedsamplot [--cpus INT] [--timeout DURATION] [--margin INT]
+#     [--prefix PREFIX] --bed BED --bams BAMS ...
 #   bedsamplot --version
 #   bedsamplot -h|--help
 #
 # Options:
-#   -h, --help        Print usage
-#   --version         Print version
-#   --cpus INT        Limit CPUs for multiprocessing
-#   --prefix PREFIX   Output prefix [default: bedsamplot]
-#   --margin INT      Margin lengths for regions [default: 0]
-#   --bed BED         Regions' BED file name
-#   -b BAMS           Space-delimited list of BAM/CRAM file names
-#   ...               Additional arguments to be passed to `samplot plot`
-#                     (-c, -s, -e, and -o are unavailable because they are used
-#                      by bedsamplot.)
+#   -h, --help          Print usage
+#   --version           Print version
+#   --cpus INT          Limit CPUs for multiprocessing
+#   --timeout DURATION  Time limit per region such as "30s", "5m", and "1h"
+#   --margin INT        Margin lengths for regions [default: 0]
+#   --prefix PREFIX     Output prefix [default: bedsamplot]
+#   --bed BED           Regions' BED file name
+#   --bams BAMS         Space-delimited list of BAM/CRAM file names
+#   ...                 Additional arguments to be passed to `samplot plot`
+#                       (-c, -s, -e, and -o are unavailable
+#                        because they are used by bedsamplot.)
 
 set -euo pipefail
 
@@ -35,7 +37,7 @@ fi
 
 COMMAND_PATH=$(realpath "${0}")
 COMMAND_NAME=$(basename "${COMMAND_PATH}")
-COMMAND_VERSION='v0.1.0'
+COMMAND_VERSION='v0.1.1'
 
 case "${OSTYPE}" in
   darwin* )
@@ -50,8 +52,9 @@ case "${OSTYPE}" in
     ;;
 esac
 MAIN_ARGS=()
-MARGIN=0
 PREFIX='bedsamplot'
+SAMPLOT='samplot'
+MARGIN=0
 
 function print_version {
   echo "${COMMAND_NAME}: ${COMMAND_VERSION}"
@@ -73,16 +76,20 @@ function abort {
   exit 1
 }
 
+
 while [[ ${#} -ge 1 ]]; do
   case "${1}" in
-    '--prefix' )
-      PREFIX="${2}" && shift 2
+    '--cpus' )
+      CPUS="${2}" && shift 2
+      ;;
+    '--timeout' )
+      SAMPLOT="timeout ${2} samplot" && shift 2
       ;;
     '--margin' )
       MARGIN="${2}" && shift 2
       ;;
-    '--cpus' )
-      CPUS="${2}" && shift 2
+    '--prefix' )
+      PREFIX="${2}" && shift 2
       ;;
     '--bed' )
       BED_PATH="${2}" && shift 2
@@ -116,4 +123,4 @@ from fileinput import input; \
     (t[0], max(1, int(t[1]) + 1 - ${MARGIN}), int(t[2]) + ${MARGIN}, (t[3].replace(\";\", \"_\") if len(t) > 3 else \"\")) \
    )(s.split(maxsplit=4))) \
  for s in input()];" "${BED_PATH}" \
-  | xargs -P "${CPUS}" -I {} bash -xc "samplot plot {} ${MAIN_ARGS[*]}"
+  | xargs -P "${CPUS}" -I {} bash -xc "${SAMPLOT} plot {} ${MAIN_ARGS[*]}"

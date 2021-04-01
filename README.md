@@ -32,8 +32,8 @@ Run `samplot plot` for each region in a BED file in parallel.
 $ bedsamplot \
     --bed <bed> \
     --reference <fa> \
-    --transcript_file <gff> \
-    --annotation_files <bed>... \
+    --transcript_filename <gff> \
+    --annotation_filenames <bed>... \
     --bams <cram>...
 ```
 

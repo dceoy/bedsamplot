@@ -7,7 +7,7 @@ services:
     build:
       context: .
       dockerfile: Dockerfile
-    image: dceoy/samplot:latest
+    image: dceoy/bedsamplot:latest
     user: ${UID}:${GID}
     userns_mode: host
     volumes:
