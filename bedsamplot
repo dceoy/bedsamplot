@@ -37,7 +37,7 @@ fi
 
 COMMAND_PATH=$(realpath "${0}")
 COMMAND_NAME=$(basename "${COMMAND_PATH}")
-COMMAND_VERSION='v0.1.1'
+COMMAND_VERSION='v0.1.2'
 
 case "${OSTYPE}" in
   darwin* )
