@@ -3,6 +3,8 @@ bedsamplot
 
 Parallelized Samplot executor for multiple regions in a BED file
 
+[![CI to Docker Hub](https://github.com/dceoy/bedsamplot/actions/workflows/docker-publish.yml/badge.svg)](https://github.com/dceoy/bedsamplot/actions/workflows/docker-publish.yml)
+
 Installation
 ------------
 
